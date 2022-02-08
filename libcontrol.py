@@ -32,9 +32,9 @@ def main(argv=sys.argv[1:]):
     
 class GitRepository(object):
 
-    worktree = none;
-    gitdir = none;
-    config = none;
+    worktree = None;
+    gitdir = None;
+    config = None;
 
     def __init__ (self, path, force=False):
         self.worktree = path;

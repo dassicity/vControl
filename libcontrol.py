@@ -56,3 +56,34 @@ class GitRepository(object):
             vers = int(self.config.get("core" , "repositoryformatversion"));
             if vers != 0:
                 raise Exception("Unsupported repository format version %s" % vers);
+    
+def repo_path(repo, *path):
+    """A function to basically compute a repo's gitdir path"""
+    return os.path.join(repo.gitdir, *path);
+
+
+def repo_file(repo, *path, mkdir=False):
+    
+    """This method is essentially like repo_path but here it is checking whether a dir at *path is present or not.
+    If a dir is not present, it is creating a dir by providing mkdir=mkdir and then returning repo_path(path)"""
+    
+    if repo_dir(repo, *path[:-1], mkdir=mkdir):
+        return repo_path(repo , *path); 
+
+
+def repo_dir(repo, *path, mkdir=False):
+    path = repo_path(repo, *path);
+
+    """Here it is checking if the path and the dir exists. If not it will create a dir in the next portion"""
+
+    if os.path.exists(path):
+        if os.path.isdir(path):
+            return path;
+        else:
+            raise Exception("Not a directory %s" % path);
+    
+    if mkdir:
+        os.makedirs(path);
+        return path;
+    else:
+        return None;

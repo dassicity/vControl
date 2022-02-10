@@ -9,6 +9,9 @@ import zlib                 # Compressing files
 
 argparser = argparse.ArgumentParser(description="The stupid content tracker");
 
+"""The CLI command for this program will be verc <command>. So to accept the command part, we will need argument sub parsers.
+Because argument parser is used to parse verc."""
+
 argsubparsers = argparser.add_subparsers(title="Commands", dest="command");
 argsubparsers.required = True;
 

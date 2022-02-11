@@ -127,8 +127,8 @@ def repo_default_config():
 
     ret.add_section("core");
     ret.set("core", "repositoryformatversion" , 0);
-    ret.set("core", "bare" , false);
-    ret.set("core", "filemode" , false);
+    ret.set("core", "bare" , False);
+    ret.set("core", "filemode" , False);
 
     return ret;
 

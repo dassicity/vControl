@@ -132,6 +132,7 @@ def repo_default_config():
 
     return ret;
 
+""" Implementing INIT command"""
 argsp = argsubparsers.add_parser("init" , help="Initialize a new, empty repository");
 argsp.add_argument("path", metavar="directory", nargs="?", default=".", help="Where to create the repository");
 
@@ -199,3 +200,44 @@ def object_read(repo, sha):
 
 def object_find(repo, name, fmt=None, follow=True):
     return name;
+
+def object_write(obj, actually_write=True):
+    # Serialize object data
+    data = obj.serialize();
+    # Add header
+    result = obj.fmt+ b' '+ str(len(data)).encode() + b'\x00' + data;
+    # Compute hash
+    sha = hashlib.sha1(result).hexdigest();
+
+    if actually_write:
+        # Compute path of the file where the data is to be written
+        path = repo_file(obj.repo, "objects", sha[0:2], sha[2:], mkdir=actually_write);
+
+        with open(path, "wb") as f:
+            f.write(zlib.compress(result));
+        
+    return sha;
+
+class GitBlob(Gitobject):
+    fmt = b'blob';
+
+    def serialize(self):
+        return self.blobdata;
+
+    def deserialize(self, data):
+        self.blobdata = data;
+
+""" Impplementing CAT-FILE command"""
+
+argsp = argsubparsers.add_parser("cat-file", help="Proide the actual data of repository objects");
+
+argsp.add_argument("type", metavar="type", choices=["blob", "commit", "tag", "tree"], help="Specify the type");
+argsp.add_argument("object", metavar="object", help="Object to display");
+
+def cmd_cat_file(args):
+    repo = repo_find();
+    cat_file(repo, args.object, fmt=args.type.encode());
+
+def cat_file(repo, obj, fmt=None):
+    obj = object_read(repo, object_find(repo, obj, fmt=fmt));
+    sys.stdout.buffer.write(obj.serialize());

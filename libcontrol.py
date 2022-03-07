@@ -271,3 +271,6 @@ def object_hash(fd, fmt, repo=None):
         raise Exception("Unknown type %s!" % fmt)
     
     return object_write(obj , repo)
+
+"""Key value list with meesage"""
+

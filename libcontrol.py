@@ -229,7 +229,7 @@ class GitBlob(Gitobject):
 
 """ Impplementing CAT-FILE command"""
 
-argsp = argsubparsers.add_parser("cat-file", help="Proide the actual data of repository objects");
+argsp = argsubparsers.add_parser("cat-file", help="Provide the actual data of repository objects");
 
 argsp.add_argument("type", metavar="type", choices=["blob", "commit", "tag", "tree"], help="Specify the type");
 argsp.add_argument("object", metavar="object", help="Object to display");

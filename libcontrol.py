@@ -273,4 +273,38 @@ def object_hash(fd, fmt, repo=None):
     return object_write(obj , repo)
 
 """Key value list with meesage"""
+"""We will use this for both object types - tags and commits"""
+def kvlm_parse(raw, start=0, dct=None):
+    if not dct:
+        dct = collections.OrderedDict();
 
+    space = raw.find(b' ', start);
+    newLine = raw.find(b'\n', start);
+
+    """This is the base case where we assume that there's no space(find return -1) or there is a blank line. So rest of the portion is the data"""
+
+    if (space<0) or (newLine<space):
+        assert(newLine==start);
+        dct[b'']=raw[start+1:];
+        return dct;
+
+    """Recursive case"""
+    key=raw[start:space];
+
+    end=start;
+    while True:
+        end=raw.find(b'\n', end+1);
+        if raw[end+1] != ord(' '):
+            break;
+
+    value=raw[space+1:end].replace(b'\n ', b'\n');
+
+    if key in dct:
+        if type(dct[key]) == list:
+            dct[key].append(value);
+        else:
+            dct[key] = [dct[key] , value];
+    else:
+        dct[key] = value;
+
+    return kvlm_parse(raw, start=end+1, dct=dct)
